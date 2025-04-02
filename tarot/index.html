@@ -3,8 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <title>타로 카드 리딩</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: #f7f2e9;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #8b5cf6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #6d28d9;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h1>🔮 타로 카드 리딩 준비 중입니다!</h1>
+  <h1>🔮 오늘의 타로 카드</h1>
+  <button onclick="drawCard()">카드 뽑기</button>
+  <div id="result"></div>
+
+  <script>
+    const tarotCards = [
+      { name: "The Fool (광대)", meaning: "새로운 시작, 자유, 순수함" },
+      { name: "The Magician (마법사)", meaning: "능력, 실행력, 창조" },
+      { name: "The Empress (여황제)", meaning: "풍요, 여성성, 창조성" },
+      { name: "Death (죽음)", meaning: "끝, 변화, 새로운 시작" },
+      { name: "The Sun (태양)", meaning: "행복, 성공, 긍정적 에너지" }
+    ];
+
+    function drawCard() {
+      const random = Math.floor(Math.random() * tarotCards.length);
+      const card = tarotCards[random];
+      document.getElementById("result").innerHTML =
+        `<p>✨ 당신의 카드는 <strong>${card.name}</strong>입니다.</p>
+         <p>📖 의미: ${card.meaning}</p>`;
+    }
+  </script>
 </body>
 </html>
