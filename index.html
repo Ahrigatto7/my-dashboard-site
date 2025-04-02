@@ -1,33 +1,57 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>내 힐링 대시보드</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f0f0f0;
-      text-align: center;
-      padding: 50px;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #fef6e4, #fceec0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
     }
+
     h1 {
-      font-size: 2em;
+      font-size: 2.5rem;
       margin-bottom: 30px;
+      color: #333;
     }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 90%;
+      max-width: 400px;
+    }
+
     .menu a {
       display: block;
-      background: #333;
-      color: white;
+      text-align: center;
       padding: 15px;
-      margin: 15px auto;
-      width: 260px;
-      border-radius: 8px;
+      font-size: 1.2rem;
+      background-color: #8b5cf6;
+      color: white;
       text-decoration: none;
-      font-size: 18px;
-      transition: 0.3s;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background 0.3s ease;
     }
+
     .menu a:hover {
-      background: #666;
+      background-color: #6d28d9;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #888;
     }
   </style>
 </head>
@@ -38,5 +62,8 @@
     <a href="myeongri/index.html">🌟 명리 성격 분석</a>
     <a href="blog/index.html">📝 블로그 글 모음</a>
   </div>
+  <footer>
+    ⓒ 2025. 나의 작은 우주
+  </footer>
 </body>
 </html>
