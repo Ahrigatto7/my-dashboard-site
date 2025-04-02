@@ -1,78 +1,241 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>타로 리딩</title>
+  <title>타로 카드 리딩</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      padding: 50px;
-      background-color: #fef6e4;
+      background: #fdf6e3;
+      padding: 40px;
     }
-    button {
-      padding: 10px 20px;
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .filters {
+      margin-bottom: 20px;
+    }
+
+    .filters select, .filters button {
+      padding: 8px 12px;
+      margin-right: 8px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .card-area {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .card {
+      width: 120px;
+      height: 180px;
+      perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.6s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.08);
+      z-index: 3;
+    }
+
+    .card:nth-child(1) { transform: rotate(-15deg); }
+    .card:nth-child(2) { transform: rotate(-9deg); }
+    .card:nth-child(3) { transform: rotate(-3deg); }
+    .card:nth-child(4) { transform: rotate(3deg); }
+    .card:nth-child(5) { transform: rotate(9deg); }
+    .card:nth-child(6) { transform: rotate(15deg); }
+
+    .inner {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+
+    .card.flipped {
+      transform: rotate(0deg) scale(1.1);
+    }
+
+    .card.flipped .inner {
+      transform: rotateY(180deg);
+    }
+
+    .front, .back {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      position: absolute;
+      backface-visibility: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .front {
+      transform: rotateY(180deg);
+    }
+
+    #result {
+      max-width: 600px;
+      margin: 40px auto 0;
+      text-align: left;
+      background: #fffbe6;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       font-size: 16px;
-      background: #5a4fcf;
+      line-height: 1.6;
+    }
+
+    #result p {
+      margin-bottom: 12px;
+    }
+
+    #result strong {
+      color: #6b4cbb;
+    }
+
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 300px;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      padding: 20px;
+      z-index: 1000;
+      display: none;
+    }
+
+    .modal.show {
+      display: block;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+    }
+
+    .modal-close {
+      margin-top: 10px;
+      background: #6b4cbb;
       color: white;
+      padding: 6px 12px;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
     }
-    img {
-      width: 180px;
-      margin-top: 20px;
-      border-radius: 12px;
-      transition: transform 0.4s ease;
-    }
-    .reversed {
-      transform: rotate(180deg);
-    }
-    #result {
-      margin-top: 30px;
-    }
+
   </style>
 </head>
 <body>
   <h1>🔮 타로 카드 리딩</h1>
-  <button onclick="drawCard()">카드 1장 뽑기</button>
+  <div class="filters">
+    <select id="category">
+      <option value="all">전체</option>
+      <option value="love">연애</option>
+      <option value="career">진로</option>
+      <option value="money">금전</option>
+    </select>
+    <button onclick="resetCards()">🔁 다시 뽑기</button>
+  </div>
+
+  <div class="card-area" id="cardArea"></div>
   <div id="result"></div>
 
-  <script>
-    const tarotCards = [
-      {
-        name: "The Fool",
-        meaning: "새로운 시작, 자유",
-        reversed: "부주의, 충동",
-        image: "cards/fool.jpg"
-      },
-      {
-        name: "The Magician",
-        meaning: "능력, 집중력",
-        reversed: "속임수, 불안정",
-        image: "cards/magician.jpg"
-      },
-      {
-        name: "The Sun",
-        meaning: "행복, 성공",
-        reversed: "거짓 희망, 과신",
-        image: "cards/sun.jpg"
-      }
-    ];
+  <div id="modal" class="modal">
+    <h3 id="modalTitle"></h3>
+    <p id="modalText"></p>
+    <button class="modal-close" onclick="closeModal()">닫기</button>
+  </div>
 
-    function drawCard() {
-      const random = Math.floor(Math.random() * tarotCards.length);
+<script>
+let tarotCards = [];
+
+fetch("cards.json")
+  .then(response => response.json())
+  .then(data => {
+    tarotCards = data;
+    setupCards();
+  });
+
+function setupCards() {
+  const maxPick = 3;
+  let picked = 0;
+  const cardArea = document.getElementById("cardArea");
+  const result = document.getElementById("result");
+  cardArea.innerHTML = "";
+  result.innerHTML = "";
+
+  for (let i = 0; i < 6; i++) {
+    const cardEl = document.createElement("div");
+    cardEl.classList.add("card");
+
+    const inner = document.createElement("div");
+    inner.classList.add("inner");
+
+    const back = document.createElement("img");
+    back.src = "https://upload.wikimedia.org/wikipedia/commons/5/53/Rider_Back.jpg";
+    back.classList.add("back");
+
+    const front = document.createElement("img");
+    front.classList.add("front");
+
+    inner.appendChild(back);
+    inner.appendChild(front);
+    cardEl.appendChild(inner);
+
+    cardEl.addEventListener("click", () => {
+      if (cardEl.classList.contains("flipped") || picked >= maxPick) return;
+
+      const selected = tarotCards[Math.floor(Math.random() * tarotCards.length)];
       const isReversed = Math.random() < 0.5;
-      const card = tarotCards[random];
+      front.src = selected.image;
 
-      const cardHTML = `
-        <img src="${card.image}" alt="${card.name}" class="${isReversed ? 'reversed' : ''}">
-        <p>✨ 당신의 카드는 <strong>${card.name}</strong>입니다 (${isReversed ? '역방향' : '정방향'})</p>
-        <p>📖 해석: ${isReversed ? card.reversed : card.meaning}</p>
-      `;
+      if (isReversed) {
+        front.style.transform = "rotate(180deg)";
+      }
 
-      document.getElementById("result").innerHTML = cardHTML;
-    }
-  </script>
+      cardEl.classList.add("flipped");
+
+      const label = ["과거", "현재", "미래"][picked];
+      const meaning = isReversed ? selected.reversed : selected.meaning;
+      const direction = isReversed ? "역방향" : "정방향";
+
+      result.innerHTML += `<p><strong>${label}</strong>: <a href="#" onclick='showDetail("${selected.name}", "${meaning}")'>${selected.name}</a> (${direction}) - ${meaning}</p>`;
+      picked++;
+    });
+
+    cardArea.appendChild(cardEl);
+  }
+}
+
+function resetCards() {
+  setupCards();
+}
+
+function showDetail(title, meaning) {
+  const modal = document.getElementById("modal");
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("modalText").innerText = meaning;
+  modal.classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("show");
+}
+</script>
 </body>
 </html>
