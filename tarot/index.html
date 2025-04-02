@@ -2,57 +2,76 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>타로 카드 리딩</title>
+  <title>타로 리딩</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       text-align: center;
       padding: 50px;
-      background: #f7f2e9;
-    }
-    h1 {
-      font-size: 2em;
-      margin-bottom: 20px;
+      background-color: #fef6e4;
     }
     button {
       padding: 10px 20px;
       font-size: 16px;
-      background: #8b5cf6;
+      background: #5a4fcf;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
-    button:hover {
-      background: #6d28d9;
+    img {
+      width: 180px;
+      margin-top: 20px;
+      border-radius: 12px;
+      transition: transform 0.4s ease;
+    }
+    .reversed {
+      transform: rotate(180deg);
     }
     #result {
       margin-top: 30px;
-      font-size: 20px;
-      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>🔮 오늘의 타로 카드</h1>
-  <button onclick="drawCard()">카드 뽑기</button>
+  <h1>🔮 타로 카드 리딩</h1>
+  <button onclick="drawCard()">카드 1장 뽑기</button>
   <div id="result"></div>
 
   <script>
     const tarotCards = [
-      { name: "The Fool (광대)", meaning: "새로운 시작, 자유, 순수함" },
-      { name: "The Magician (마법사)", meaning: "능력, 실행력, 창조" },
-      { name: "The Empress (여황제)", meaning: "풍요, 여성성, 창조성" },
-      { name: "Death (죽음)", meaning: "끝, 변화, 새로운 시작" },
-      { name: "The Sun (태양)", meaning: "행복, 성공, 긍정적 에너지" }
+      {
+        name: "The Fool",
+        meaning: "새로운 시작, 자유",
+        reversed: "부주의, 충동",
+        image: "cards/fool.jpg"
+      },
+      {
+        name: "The Magician",
+        meaning: "능력, 집중력",
+        reversed: "속임수, 불안정",
+        image: "cards/magician.jpg"
+      },
+      {
+        name: "The Sun",
+        meaning: "행복, 성공",
+        reversed: "거짓 희망, 과신",
+        image: "cards/sun.jpg"
+      }
     ];
 
     function drawCard() {
       const random = Math.floor(Math.random() * tarotCards.length);
+      const isReversed = Math.random() < 0.5;
       const card = tarotCards[random];
-      document.getElementById("result").innerHTML =
-        `<p>✨ 당신의 카드는 <strong>${card.name}</strong>입니다.</p>
-         <p>📖 의미: ${card.meaning}</p>`;
+
+      const cardHTML = `
+        <img src="${card.image}" alt="${card.name}" class="${isReversed ? 'reversed' : ''}">
+        <p>✨ 당신의 카드는 <strong>${card.name}</strong>입니다 (${isReversed ? '역방향' : '정방향'})</p>
+        <p>📖 해석: ${isReversed ? card.reversed : card.meaning}</p>
+      `;
+
+      document.getElementById("result").innerHTML = cardHTML;
     }
   </script>
 </body>
