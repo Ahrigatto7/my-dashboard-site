@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -80,9 +79,11 @@
       position: absolute;
       backface-visibility: hidden;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transform: rotateY(180deg);
     }
+
     .back {
-      background-image: url('cards/back.jpg'); /* 뒷면 이미지 파일 경로 */
+      background-image: url('cards/back.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -92,10 +93,6 @@
       width: 100%;
       height: 100%;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .front {
-      transform: rotateY(180deg);
     }
 
     #result {
@@ -130,6 +127,7 @@
       padding: 20px;
       z-index: 1000;
       display: none;
+      text-align: center;
     }
 
     .modal.show {
@@ -138,6 +136,12 @@
 
     .modal h3 {
       margin-top: 0;
+    }
+
+    .modal img {
+      width: 100px;
+      height: auto;
+      margin: 10px 0;
     }
 
     .modal-close {
@@ -149,7 +153,6 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
   </style>
 </head>
 <body>
@@ -161,7 +164,7 @@
       <option value="career">진로</option>
       <option value="money">금전</option>
     </select>
-    <button onclick="resetCards()">🔁 다시 뽑기</button>
+    <button onclick="setupCards()">🔁 다시 뽑기</button>
   </div>
 
   <div class="card-area" id="cardArea"></div>
@@ -169,6 +172,7 @@
 
   <div id="modal" class="modal">
     <h3 id="modalTitle"></h3>
+    <img id="modalImage" src="" alt="카드 이미지">
     <p id="modalText"></p>
     <button class="modal-close" onclick="closeModal()">닫기</button>
   </div>
@@ -188,8 +192,15 @@ function setupCards() {
   let picked = 0;
   const cardArea = document.getElementById("cardArea");
   const result = document.getElementById("result");
+  const category = document.getElementById("category").value;
+
   cardArea.innerHTML = "";
   result.innerHTML = "";
+
+  // 필터 적용
+  let filteredCards = category === "all" ? tarotCards : tarotCards.filter(card =>
+    !card.category || card.category === category
+  );
 
   for (let i = 0; i < 6; i++) {
     const cardEl = document.createElement("div");
@@ -211,7 +222,7 @@ function setupCards() {
     cardEl.addEventListener("click", () => {
       if (cardEl.classList.contains("flipped") || picked >= maxPick) return;
 
-      const selected = tarotCards[Math.floor(Math.random() * tarotCards.length)];
+      const selected = filteredCards[Math.floor(Math.random() * filteredCards.length)];
       const isReversed = Math.random() < 0.5;
       front.src = selected.image;
 
@@ -225,7 +236,7 @@ function setupCards() {
       const meaning = isReversed ? selected.reversed : selected.meaning;
       const direction = isReversed ? "역방향" : "정방향";
 
-      result.innerHTML += `<p><strong>${label}</strong>: <a href="#" onclick='showDetail("${selected.name}", "${meaning}")'>${selected.name}</a> (${direction}) - ${meaning}</p>`;
+      result.innerHTML += `<p><strong>${label}</strong>: <a href="#" onclick='showDetail("${selected.name}", "${meaning}", "${selected.image}", ${isReversed})'>${selected.name}</a> (${direction}) - ${meaning}</p>`;
       picked++;
     });
 
@@ -233,15 +244,13 @@ function setupCards() {
   }
 }
 
-function resetCards() {
-  setupCards();
-}
-
-function showDetail(title, meaning) {
-  const modal = document.getElementById("modal");
+function showDetail(title, meaning, image, isReversed) {
   document.getElementById("modalTitle").innerText = title;
+  const img = document.getElementById("modalImage");
+  img.src = image;
+  img.style.transform = isReversed ? "rotate(180deg)" : "rotate(0deg)";
   document.getElementById("modalText").innerText = meaning;
-  modal.classList.add("show");
+  document.getElementById("modal").classList.add("show");
 }
 
 function closeModal() {
