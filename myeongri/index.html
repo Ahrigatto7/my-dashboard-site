@@ -2,9 +2,111 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>명리 성격 분석</title>
+  <title>사주팔자 자동 분석</title>
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background: #fdf6e3;
+      padding: 40px;
+      text-align: center;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    input {
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #6b4cbb;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fffde6;
+      border-radius: 10px;
+      font-size: 17px;
+      line-height: 1.6;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .result strong {
+      color: #6b4cbb;
+    }
+  </style>
 </head>
 <body>
-  <h1>🌟 명리 성격 분석 페이지 준비 중!</h1>
+  <div class="container">
+    <h2>🔮 생년월일로 십신 분석</h2>
+    <p>생년월일을 입력하면 일간과 지지로 십신을 보여줍니다.</p>
+    <input type="date" id="birthdate">
+    <button onclick="calculateTenGods()">분석하기</button>
+    <div id="output" class="result"></div>
+  </div>
+
+  <script>
+    const heavenlyStems = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'];
+    const earthlyBranches = ['자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'];
+
+    const tenGodsByEarthlyBranch = {
+      '甲木': ['편인', '정재', '겁재', '비견', '식신', '상관', '편재', '정재', '편관', '정관', '식신', '정인'],
+      '乙木': ['정인', '편재', '비견', '겁재', '상관', '식신', '정재', '편재', '정관', '편관', '상관', '편인'],
+      '丙火': ['정관', '상관', '편인', '정인', '정재', '겁재', '비견', '식신', '편재', '정재', '겁재', '편관'],
+      '丁火': ['편관', '식신', '정인', '편인', '편재', '비견', '겁재', '상관', '정재', '편재', '비견', '정관'],
+      '戊土': ['편재', '비견', '편관', '정관', '겁재', '정인', '편인', '비견', '식신', '상관', '겁재', '정재'],
+      '己土': ['정재', '겁재', '정관', '편관', '비견', '편인', '정인', '겁재', '상관', '식신', '비견', '편재'],
+      '庚金': ['상관', '정인', '편재', '정재', '편인', '편관', '정관', '식신', '겁재', '비견', '편인', '정재'],
+      '辛金': ['식신', '편인', '정재', '편재', '정인', '정관', '편관', '상관', '비견', '겁재', '정인', '편재'],
+      '壬水': ['겁재', '정관', '상관', '식신', '정재', '편재', '정인', '편관', '편인', '정인', '정재', '비견'],
+      '癸水': ['비견', '편관', '식신', '상관', '편재', '정재', '편인', '정관', '정인', '편인', '편재', '겁재']
+    };
+
+    function calculateTenGods() {
+      const dateInput = document.getElementById("birthdate").value;
+      const output = document.getElementById("output");
+
+      if (!dateInput) {
+        output.innerHTML = "⚠️ 생년월일을 입력해주세요.";
+        return;
+      }
+
+      const birthDate = new Date(dateInput);
+      const baseDate = new Date("1984-02-02");
+      const deltaDays = (birthDate - baseDate) / (1000 * 60 * 60 * 24);
+      const dayStemIndex = Math.floor(deltaDays) % 10;
+      const branchIndex = Math.floor(deltaDays) % 12;
+
+      const stems = ['甲木','乙木','丙火','丁火','戊土','己土','庚金','辛金','壬水','癸水'];
+      const stemKey = stems[dayStemIndex];
+      const branch = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'][branchIndex];
+
+      const result = tenGodsByEarthlyBranch[stemKey]?.[branchIndex] || '데이터 없음';
+
+      output.innerHTML = `
+        <strong>일간:</strong> ${stemKey}<br>
+        <strong>지지:</strong> ${branch}<br>
+        <strong>십신:</strong> ${result}<br><br>
+        ※ 일간과 지지 기준 십신을 간략히 출력합니다.
+      `;
+    }
+  </script>
 </body>
 </html>

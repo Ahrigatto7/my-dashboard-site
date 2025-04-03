@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "tarot/cards"
+		},
+		{
+			"path": "tarot/css"
+		},
+		{
+			"path": "tarot/data"
+		},
+		{
+			"path": "tarot/js"
+		}
+	]
+}

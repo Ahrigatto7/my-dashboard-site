@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .menu {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      width: 200px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+      text-decoration: none;
+      color: #333;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.4rem;
+    }
+    .card p {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 나의 대시보드</h1>
+  <div class="menu">
+    <a href="tarot/index.html" class="card">
+      <h2>🔮 타로 리딩</h2>
+      <p>카드 3장으로 현재 흐름을 리딩해보세요</p>
+    </a>
+    <a href="myeongri/index.html" class="card">
+      <h2>📜 수리 성격분석</h2>
+      <p>생년월일로 오행, 십신 성향 알아보기</p>
+    </a>
+    <a href="blog/index.html" class="card">
+      <h2>📝 블로그</h2>
+      <p>글 모음, 사주/타로 기록 및 통찰 저장</p>
+    </a>
+  </div>
+</body>
+</html>

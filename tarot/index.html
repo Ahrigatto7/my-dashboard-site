@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -83,7 +84,7 @@
     }
 
     .back {
-      background-image: url('cards/back.jpg');
+      background-image: url('cards/back.jpg'); /* 뒷면 이미지 파일 경로 */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -176,86 +177,48 @@
     <p id="modalText"></p>
     <button class="modal-close" onclick="closeModal()">닫기</button>
   </div>
-
-<script>
-let tarotCards = [];
-
-fetch("cards.json")
-  .then(response => response.json())
-  .then(data => {
-    tarotCards = data;
-    setupCards();
-  });
-
-function setupCards() {
-  const maxPick = 3;
-  let picked = 0;
-  const cardArea = document.getElementById("cardArea");
-  const result = document.getElementById("result");
-  const category = document.getElementById("category").value;
-
-  cardArea.innerHTML = "";
-  result.innerHTML = "";
-
-  // 필터 적용
-  let filteredCards = category === "all" ? tarotCards : tarotCards.filter(card =>
-    !card.category || card.category === category
-  );
-
-  for (let i = 0; i < 6; i++) {
-    const cardEl = document.createElement("div");
-    cardEl.classList.add("card");
-
-    const inner = document.createElement("div");
-    inner.classList.add("inner");
-
-    const back = document.createElement("div");
-    back.classList.add("back");
-
-    const front = document.createElement("img");
-    front.classList.add("front");
-
-    inner.appendChild(back);
-    inner.appendChild(front);
-    cardEl.appendChild(inner);
-
-    cardEl.addEventListener("click", () => {
-      if (cardEl.classList.contains("flipped") || picked >= maxPick) return;
-
-      const selected = filteredCards[Math.floor(Math.random() * filteredCards.length)];
-      const isReversed = Math.random() < 0.5;
-      front.src = selected.image;
-
-      if (isReversed) {
-        front.style.transform = "rotate(180deg)";
+  <!DOCTYPE html>
+  <html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>🔮 타로 카드 리딩</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#6b4cbb" />
+  </head>
+  <body>
+  </script>
+    <h1>🔮 타로 카드 리딩</h1>
+    <div class="filters">
+      <select id="category">
+        <option value="all">전체</option>
+        <option value="love">연애</option>
+        <option value="career">진로</option>
+        <option value="money">금전</option>
+      </select>
+      <button id="shuffleBtn">🔁 다시 뽑기</button>
+    </div>
+  
+    <div class="card-area" id="cardArea"></div>
+    <div id="result"></div>
+  
+    <div id="modal" class="modal">
+      <h3 id="modalTitle"></h3>
+      <img id="modalImage" src="" alt="카드 이미지" />
+      <p id="modalText"></p>
+      <button class="modal-close" id="closeModalBtn">닫기</button>
+    </div>
+    <div class="overlay" id="overlay"></div>
+  
+    <script src="js/cards.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js")
+          .then(() => console.log("✅ Service Worker Registered"))
+          .catch(err => console.error("SW registration failed:", err));
       }
-
-      cardEl.classList.add("flipped");
-
-      const label = ["과거", "현재", "미래"][picked];
-      const meaning = isReversed ? selected.reversed : selected.meaning;
-      const direction = isReversed ? "역방향" : "정방향";
-
-      result.innerHTML += `<p><strong>${label}</strong>: <a href="#" onclick='showDetail("${selected.name}", "${meaning}", "${selected.image}", ${isReversed})'>${selected.name}</a> (${direction}) - ${meaning}</p>`;
-      picked++;
-    });
-
-    cardArea.appendChild(cardEl);
-  }
-}
-
-function showDetail(title, meaning, image, isReversed) {
-  document.getElementById("modalTitle").innerText = title;
-  const img = document.getElementById("modalImage");
-  img.src = image;
-  img.style.transform = isReversed ? "rotate(180deg)" : "rotate(0deg)";
-  document.getElementById("modalText").innerText = meaning;
-  document.getElementById("modal").classList.add("show");
-}
-
-function closeModal() {
-  document.getElementById("modal").classList.remove("show");
-}
-</script>
+    </script>
 </body>
 </html>
